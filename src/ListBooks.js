@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
+import './ListBooks.css'
 
 class ListBooks extends Component {
     render() {
@@ -11,7 +12,9 @@ class ListBooks extends Component {
             <div className="list-books-content">
               <div>
                 <div className="bookshelf">
-                  <h2 className="bookshelf-title">Currently Reading</h2>
+                  <div className="bookshelf-title-wrapper">
+                    <div className="bookshelf-title"><a href="#"><span>Currently Reading</span></a></div>
+                  </div>
                   <div className="bookshelf-books">
                     <ol className="books-grid">
                       <li>
@@ -54,7 +57,9 @@ class ListBooks extends Component {
                   </div>
                 </div>
                 <div className="bookshelf">
-                  <h2 className="bookshelf-title">Want to Read</h2>
+                  <div className="bookshelf-title-wrapper">
+                    <div className="bookshelf-title"><a href="#"><span>Want to Read</span></a></div>
+                  </div>
                   <div className="bookshelf-books">
                     <ol className="books-grid">
                       <li>
@@ -97,7 +102,9 @@ class ListBooks extends Component {
                   </div>
                 </div>
                 <div className="bookshelf">
-                  <h2 className="bookshelf-title">Read</h2>
+                <div className="bookshelf-title-wrapper">
+                    <div className="bookshelf-title"><a href="#"><span>Read</span></a></div>
+                  </div>
                   <div className="bookshelf-books">
                     <ol className="books-grid">
                       <li>
