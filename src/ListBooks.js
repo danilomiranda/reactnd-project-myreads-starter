@@ -2,41 +2,50 @@ import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import './ListBooks.css'
-import * as BooksAPI from './BooksAPI'
-import Book from './Book'
+import * as BooksAPI from './utils/BooksAPI'
+import Shelf from './Shelf'
 
 class ListBooks extends Component {
   static propTypes = {
-    books: PropTypes.shape({
-      currentlyReading: PropTypes.array.isRequired,
-      wantToRead: PropTypes.array.isRequired,
-      read: PropTypes.array.isRequired
-    })
+    currentlyReading: PropTypes.array.isRequired,
+    wantToRead: PropTypes.array.isRequired,
+    read: PropTypes.array.isRequired
   }
   state = {
-    books: {
-      currentlyReading: [],
-      wantToRead: [],
-      read: []
-    },
+    currentlyReading: [],
+    wantToRead: [],
+    read: []
   }
   componentDidMount() {
     BooksAPI.getAll().then((books) => {
       this.setState({
-        books: {
-          currentlyReading: books.filter((book) => {
-          return book.shelf === 'currentlyReading'
-          }),
-          wantToRead: books.filter((book) => {
-          return book.shelf === 'wantToRead'
-          }),
-          read: books.filter((book) => {
-          return book.shelf === 'read'
-          })
-        }
+        currentlyReading: books.filter((book) => {
+        return book.shelf === 'currentlyReading'
+        }),
+        wantToRead: books.filter((book) => {
+        return book.shelf === 'wantToRead'
+        }),
+        read: books.filter((book) => {
+        return book.shelf === 'read'
+        }),
+        all: books
       })
-      console.log(this.state.books.currentlyReading)
     })
+  }
+  changeShelf = (book, newShelf) => {
+    const oldShelf = book.shelf
+    book.shelf = newShelf
+    this.setState((state) => ({
+      [newShelf]: state[newShelf].concat(book),
+      [oldShelf]: state[oldShelf].filter((b) => {
+      return b.id !== book.id
+      })
+    }))
+    BooksAPI.update(book, newShelf).then((result) => {
+      console.log(result)
+      
+    })
+    
   }
   render() {
     return (
@@ -46,48 +55,9 @@ class ListBooks extends Component {
         </div>
         <div className="list-books-content">
           <div>
-            <div className="bookshelf">
-              <div className="bookshelf-title-wrapper">
-                <div className="bookshelf-title"><a href="#"><span>Currently Reading</span></a></div>
-              </div>
-              <div className="bookshelf-books">
-                <ol className="books-grid">
-                  {this.state.books.currentlyReading.map((book) => 
-                    <li key={book.id}>
-                      <Book book={book}/>    
-                    </li>
-                  )}
-                </ol>
-              </div>
-            </div>
-            <div className="bookshelf">
-              <div className="bookshelf-title-wrapper">
-                <div className="bookshelf-title"><a href="#"><span>Want to Read</span></a></div>
-              </div>
-              <div className="bookshelf-books">
-                <ol className="books-grid">
-                  {this.state.books.wantToRead.map((book) => 
-                    <li key={book.id}>
-                      <Book book={book}/>    
-                    </li>
-                  )}
-                </ol>
-              </div>
-            </div>
-            <div className="bookshelf">
-            <div className="bookshelf-title-wrapper">
-                <div className="bookshelf-title"><a href="#"><span>Read</span></a></div>
-              </div>
-              <div className="bookshelf-books">
-                <ol className="books-grid">
-                  {this.state.books.read.map((book) => 
-                    <li key={book.id}>
-                      <Book book={book}/>    
-                    </li>
-                  )}
-                </ol>
-              </div>
-            </div>
+            <Shelf onChangeShelf={this.changeShelf} title='Currently Reading' books={this.state.currentlyReading}/>
+            <Shelf onChangeShelf={this.changeShelf} title='Want to Read' books={this.state.wantToRead}/>
+            <Shelf onChangeShelf={this.changeShelf} title='Read' books={this.state.read}/>
           </div>
         </div>
         <div className="open-search">
