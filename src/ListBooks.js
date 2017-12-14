@@ -7,15 +7,20 @@ import Shelf from './Shelf'
 
 class ListBooks extends Component {
   static propTypes = {
-    currentlyReading: PropTypes.array.isRequired,
-    wantToRead: PropTypes.array.isRequired,
-    read: PropTypes.array.isRequired
+    currentlyReading: PropTypes.array,
+    wantToRead: PropTypes.array,
+    read: PropTypes.array
   }
   state = {
     currentlyReading: [],
     wantToRead: [],
     read: []
   }
+  shelfs = [
+    { title: 'Currently Reading', collectionName: 'currentlyReading'},
+    { title: 'Want to Read', collectionName: 'wantToRead'},
+    { title: 'Read', collectionName: 'read'}
+  ]
   componentDidMount() {
     BooksAPI.getAll().then((books) => {
       this.setState({
@@ -41,11 +46,7 @@ class ListBooks extends Component {
       return b.id !== book.id
       })
     }))
-    BooksAPI.update(book, newShelf).then((result) => {
-      console.log(result)
-      
-    })
-    
+    BooksAPI.update(book, newShelf)
   }
   render() {
     return (
@@ -55,9 +56,14 @@ class ListBooks extends Component {
         </div>
         <div className="list-books-content">
           <div>
-            <Shelf onChangeShelf={this.changeShelf} title='Currently Reading' books={this.state.currentlyReading}/>
-            <Shelf onChangeShelf={this.changeShelf} title='Want to Read' books={this.state.wantToRead}/>
-            <Shelf onChangeShelf={this.changeShelf} title='Read' books={this.state.read}/>
+            {this.shelfs.map(shelf => (
+                <Shelf key={shelf.title}
+                  onChangeShelf={this.changeShelf}
+                  title={shelf.title}
+                  shelfs={this.shelfs}
+                  books={this.state[shelf.collectionName]}
+                />
+              ))}
           </div>
         </div>
         <div className="open-search">

@@ -1,27 +1,22 @@
-import React, { Component } from 'react'
+import React from 'react'
 import './Book.css'
 
-class Book extends Component {
-    state = {
-        value: ''
-    }
-    render() {
-        const { book, onChangeShelf } = this.props
+const Book = ({ book, onChangeShelf, shelfs, shelf }) => {
+      shelfs.filter(item => item.title !== shelf)
         return (
             <div className="book">
                 <div className="book-top">
-                    <div className="book-cover" style={{ 
+                    <div className="book-cover" style={{
                     width: 128,
                     height: 193,
-                    backgroundImage: `url(${book.imageLinks.thumbnail})` 
+                    backgroundImage: `url(${book.imageLinks.thumbnail})`
                     }}/>
                 <div className="book-shelf-changer">
                     <select id='select-shelf' onChange={(event) => onChangeShelf(book, event.target.value)}>
                     <option value="none" >Move to...</option>
-                    <option value="currentlyReading">Currently Reading</option>
-                    <option value="wantToRead">Want to Read</option>
-                    <option value="read">Read</option>
-                    <option value="none">None</option>
+                    {shelfs.map(option => (
+                        <option key={option.collectionName} value={option.collectionName}>{option.title}</option>
+                    ))}
                     </select>
                 </div>
                 </div>
@@ -37,7 +32,6 @@ class Book extends Component {
                 </div>
             </div>
         )
-    }
 }
 
 export default Book
