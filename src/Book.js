@@ -22,13 +22,13 @@ const Book = ({ book, onChangeShelf, shelfs, shelf }) => {
                 </div>
                 <div className="book-title">{book.title}</div>
                 <div className="book-authors">
-                {book.authors.map((author, i) => {
+                {book.authors ? (book.authors.map((author, i) => {
                     if (book.authors.length === i + 1) {
                         return author
                     } else {
                         return `${author}, `
                     }
-                })}
+                })) : null }
                 </div>
             </div>
         )

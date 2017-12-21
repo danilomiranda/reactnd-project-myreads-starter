@@ -1,5 +1,4 @@
 import React from 'react'
-import ReactLoading from 'react-loading'
 import Book from './Book'
 import './Shelf.css'
 
@@ -11,7 +10,7 @@ const Shelf = ({ title, shelfs, books, onChangeShelf }) => (
     <div className="bookshelf-books">
       <ol className="books-grid">
         {!books || books.length === 0 ? (
-          <ReactLoading type='bars' color='#444'/>
+          <h2>Nenhum livro carregado</h2>
           ):(
           books.map((book) =>
           <li key={book.id}>
