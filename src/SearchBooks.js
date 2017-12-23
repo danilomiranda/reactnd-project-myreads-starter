@@ -1,25 +1,16 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import Book from './Book'
+import ReactLoading from 'react-loading'
 import Shelf from './Shelf'
+import If from './utils/if'
 import './SearchBooks.css'
 
 const  SearchBooks = (props) => {
-    const {searchQuery, search, books, shelfs, shelf, onChangeShelf} = props
-    let bookResults = [];
-    if (books.length > 0) {
-        bookResults = books.map((book, index) => {
-            return (
-                <li key={index}>
-                    <Book book={book} onChangeShelf={onChangeShelf} shelfs={shelfs} shelf={books.title} />
-                </li>
-            );
-        });
-    }
+    const {searchQuery, search, books, shelfs, onChangeShelf, loadShelfs, loading} = props
     return (
         <div className="search-books">
             <div className="search-books-bar">
-            <Link to='/' className='close-search'>Close</Link>
+            <Link to='/' className='close-search' onClick={(event) => loadShelfs()}>Close</Link>
                 <div className="search-books-input-wrapper">
                     <input
                     type="text"
@@ -33,13 +24,20 @@ const  SearchBooks = (props) => {
                 </div>
             </div>
             <div className="search-books-results">
+            <If test={loading} >
+                <div className='loading'>
+                  <ReactLoading type='bars' color='#444'/>
+                </div>
+            </If>
             {shelfs.map(shelf => (
-                <Shelf key={shelf.title}
-                  onChangeShelf={onChangeShelf}
-                  title={shelf.title}
-                  shelfs={shelfs}
-                  books={books[shelf.collectionName]}
-                />
+                 <If test={!books[shelf.collectionName] || books[shelf.collectionName].length > 0} >
+                    <Shelf key={shelf.title}
+                    onChangeShelf={onChangeShelf}
+                    title={shelf.title}
+                    shelfs={shelfs}
+                    books={books[shelf.collectionName]}
+                    />
+                </If>
               ))}
             </div>
         </div>

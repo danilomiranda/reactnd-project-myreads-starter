@@ -1,11 +1,13 @@
-import React, { Component } from 'react'
+import React from 'react'
 import { Link } from 'react-router-dom'
+import ReactLoading from 'react-loading'
+import If from './utils/if'
 
 import './ListBooks.css'
 
 import Shelf from './Shelf'
 
-const ListBooks = ({shelfs, changeShelf, books}) => {
+const ListBooks = ({shelfs, changeShelf, books, loading}) => {
   
     return (
         <div className="list-books">
@@ -14,13 +16,20 @@ const ListBooks = ({shelfs, changeShelf, books}) => {
         </div>
         <div className="list-books-content">
           <div>
+            <If test={loading} >
+                <div className='loading'>
+                  <ReactLoading type='bars' color='#444'/>
+                </div>
+            </If>
             {shelfs.map(shelf => (
-                <Shelf key={shelf.title}
-                  onChangeShelf={changeShelf}
-                  title={shelf.title}
-                  shelfs={shelfs}
-                  books={books[shelf.collectionName]}
-                />
+                <If test={!books[shelf.collectionName] || books[shelf.collectionName].length > 0} >
+                  <Shelf key={shelf.title} 
+                    onChangeShelf={changeShelf}
+                    title={shelf.title}
+                    shelfs={shelfs}
+                    books={books[shelf.collectionName]}
+                  />
+                </If>
               ))}
           </div>
         </div>

@@ -4,7 +4,8 @@ import PropTypes from 'prop-types'
 import * as BooksAPI from './utils/BooksAPI'
 import SearchBooks from './SearchBooks'
 import ListBooks from './ListBooks'
-import Book from './Book'
+
+const getAll = () => BooksAPI.getAll()
 
 class BooksApp extends React.Component {
   static propTypes = {
@@ -14,6 +15,7 @@ class BooksApp extends React.Component {
   }
   state = {
     shelfs: {
+      none: [],
       currentlyReading: [],
       wantToRead: [],
       read: []
@@ -21,6 +23,7 @@ class BooksApp extends React.Component {
     bookResult: [],
     bookById: [],
     searchQuery: "",
+    loading: true
   }
   shelfs = [
     { title: 'Currently Reading', collectionName: 'currentlyReading'},
@@ -28,11 +31,15 @@ class BooksApp extends React.Component {
     { title: 'Read', collectionName: 'read'},
     { title: 'None', collectionName: 'none'}
   ]
+
   componentDidMount() {
-    BooksAPI.getAll().then((books) => {
+    getAll().then((books) => {
       this.setState({
         shelfs: {
-          currentlyReading: books.filter((book) => {
+            none: books.filter((book) => {
+            return !book.shelf
+            }),
+            currentlyReading: books.filter((book) => {
             return book.shelf === 'currentlyReading'
             }),
             wantToRead: books.filter((book) => {
@@ -40,12 +47,33 @@ class BooksApp extends React.Component {
             }),
             read: books.filter((book) => {
             return book.shelf === 'read'
-            }),
+            })
+        },
+        all: books,
+        loading: false
+      })
+    })
+  }
+
+  loadShelfs = () => {
+    getAll().then((books) => {
+      this.setState({
+        shelfs: {
             none: books.filter((book) => {
             return !book.shelf
             }),
+            currentlyReading: books.filter((book) => {
+            return book.shelf === 'currentlyReading'
+            }),
+            wantToRead: books.filter((book) => {
+            return book.shelf === 'wantToRead'
+            }),
+            read: books.filter((book) => {
+            return book.shelf === 'read'
+            })
         },
-        all: books
+        all: books,
+        loading: false
       })
     })
   }
@@ -55,7 +83,10 @@ class BooksApp extends React.Component {
     BooksAPI.search(query, 5).then(books => {
       this.setState({
         shelfs: {
-          currentlyReading: books.filter((book) => {
+            none: books.filter((book) => {
+            return !book.shelf
+            }),
+            currentlyReading: books.filter((book) => {
             return book.shelf === 'currentlyReading'
             }),
             wantToRead: books.filter((book) => {
@@ -63,12 +94,10 @@ class BooksApp extends React.Component {
             }),
             read: books.filter((book) => {
             return book.shelf === 'read'
-            }),
-            none: books.filter((book) => {
-              return !book.shelf
             })
         },
-        all: books
+        all: books,
+        loading: false
       })
     })
   }
@@ -89,7 +118,8 @@ class BooksApp extends React.Component {
                   return book.shelf === 'read'
                   }),
               },
-              all: books
+              all: books,
+              loading: false
             })
           });
           if (currentSearchQuery !== "") {
@@ -104,7 +134,11 @@ class BooksApp extends React.Component {
     return (
       <div className="app">
         <Route exact path='/' render={() => (
-          <ListBooks shelfs={this.shelfs} changeShelf={this.onChangeShelf} books={this.state.shelfs}/>
+          <ListBooks shelfs={this.shelfs}
+            changeShelf={this.onChangeShelf}
+            books={this.state.shelfs}
+            loading={this.state.loading}
+            />
         )}/>
         <Route path='/search' render={({ history }) => (
           <SearchBooks
@@ -113,6 +147,8 @@ class BooksApp extends React.Component {
             books={this.state.shelfs}
             shelfs={this.shelfs}
             onChangeShelf={this.onChangeShelf}
+            loadShelfs={this.loadShelfs}
+            loading={this.state.loading}
             />
           )}/>
       </div>

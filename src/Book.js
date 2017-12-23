@@ -2,7 +2,7 @@ import React from 'react'
 import './Book.css'
 
 const Book = ({ book, onChangeShelf, shelfs, shelf }) => {
-      shelfs.filter(item => item.title !== shelf)
+      shelfs = shelfs.filter(item => item.title !== shelf)
         return (
             <div className="book">
                 <div className="book-top">
