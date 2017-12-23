@@ -22,8 +22,8 @@ const ListBooks = ({shelfs, changeShelf, books, loading}) => {
                 </div>
             </If>
             {shelfs.map(shelf => (
-                <If test={!books[shelf.collectionName] || books[shelf.collectionName].length > 0} >
-                  <Shelf key={shelf.title} 
+                <If key={shelf.title}  test={!books[shelf.collectionName] || books[shelf.collectionName].length > 0} >
+                  <Shelf 
                     onChangeShelf={changeShelf}
                     title={shelf.title}
                     shelfs={shelfs}

@@ -30,8 +30,8 @@ const  SearchBooks = (props) => {
                 </div>
             </If>
             {shelfs.map(shelf => (
-                 <If test={!books[shelf.collectionName] || books[shelf.collectionName].length > 0} >
-                    <Shelf key={shelf.title}
+                 <If key={shelf.title} test={!books[shelf.collectionName] || books[shelf.collectionName].length > 0} >
+                    <Shelf
                     onChangeShelf={onChangeShelf}
                     title={shelf.title}
                     shelfs={shelfs}
