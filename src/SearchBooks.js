@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import ReactLoading from 'react-loading'
-import BookList from './BookList'
+import SearchResult from './SearchResult'
 import If from './utils/if'
 import './SearchBooks.css'
 
@@ -30,11 +30,11 @@ const  SearchBooks = (props) => {
                 </div>
             </If>
             <If test={bookResult.length > 0} >
-                <BookList onChangeShelf={onChangeShelf} books={bookResult} shelfs={shelfs} shelf={null} />
+                <SearchResult onChangeShelf={onChangeShelf} books={bookResult} shelfs={shelfs} shelf={null} />
             </If>
             <If test={bookResult.length === 0} >
             <div className="bookshelf-title-wrapper">
-                <div className="bookshelf-title"><a href="#"><span>Nenhum resultado encontrado</span></a></div>
+                <div className="bookshelf-title"><a href="#"><span>No book found</span></a></div>
             </div>
               </If>
             </div>

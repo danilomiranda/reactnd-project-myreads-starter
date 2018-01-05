@@ -80,9 +80,9 @@ class BooksApp extends React.Component {
   search = query => {
     this.setState({ searchQuery: query })
     if(!query) {
-      this.loadShelfs()
+      this.setState({bookResult: []})
     } else {
-      BooksAPI.search(query, 5).then(books => {
+      BooksAPI.search(query.trim(), 5).then(books => {
         if(!books) {
           books = []
         }
@@ -113,6 +113,8 @@ class BooksApp extends React.Component {
         } else {
           this.setState({bookResult: []})
         }
+      }).catch((err) => {
+        console.log(`ERROR -> ${err}`)
       })
     }
   }

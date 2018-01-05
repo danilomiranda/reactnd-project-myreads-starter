@@ -1,7 +1,7 @@
 import React from 'react'
 import Book from './Book'
 
-const BookList = ({ title, shelfs, books, onChangeShelf }) => (
+const SearchResult = ({ title, shelfs, books, onChangeShelf }) => (
     <ol className="books-grid">
         {!books || books.length === 0 ? (
           <h2>Nenhum livro carregado</h2>
@@ -14,4 +14,4 @@ const BookList = ({ title, shelfs, books, onChangeShelf }) => (
       </ol>
 )
 
-export default BookList
+export default SearchResult
