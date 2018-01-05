@@ -1,12 +1,12 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import ReactLoading from 'react-loading'
-import Shelf from './Shelf'
+import BookList from './BookList'
 import If from './utils/if'
 import './SearchBooks.css'
 
 const  SearchBooks = (props) => {
-    const {searchQuery, search, books, shelfs, onChangeShelf, loadShelfs, loading} = props
+    const {searchQuery, search, shelfs, onChangeShelf, loadShelfs, loading, bookResult} = props
     return (
         <div className="search-books">
             <div className="search-books-bar">
@@ -29,16 +29,14 @@ const  SearchBooks = (props) => {
                   <ReactLoading type='bars' color='#444'/>
                 </div>
             </If>
-            {shelfs.map(shelf => (
-                 <If key={shelf.title} test={!books[shelf.collectionName] || books[shelf.collectionName].length > 0} >
-                    <Shelf
-                    onChangeShelf={onChangeShelf}
-                    title={shelf.title}
-                    shelfs={shelfs}
-                    books={books[shelf.collectionName]}
-                    />
-                </If>
-              ))}
+            <If test={bookResult.length > 0} >
+                <BookList onChangeShelf={onChangeShelf} books={bookResult} shelfs={shelfs} shelf={null} />
+            </If>
+            <If test={bookResult.length === 0} >
+            <div className="bookshelf-title-wrapper">
+                <div className="bookshelf-title"><a href="#"><span>Nenhum resultado encontrado</span></a></div>
+            </div>
+              </If>
             </div>
         </div>
     )

@@ -15,11 +15,11 @@ class BooksApp extends React.Component {
   }
   state = {
     shelfs: {
-      none: [],
       currentlyReading: [],
       wantToRead: [],
       read: []
     },
+    allBooks:[],
     bookResult: [],
     bookById: [],
     searchQuery: "",
@@ -28,17 +28,13 @@ class BooksApp extends React.Component {
   shelfs = [
     { title: 'Currently Reading', collectionName: 'currentlyReading'},
     { title: 'Want to Read', collectionName: 'wantToRead'},
-    { title: 'Read', collectionName: 'read'},
-    { title: 'None', collectionName: 'none'}
+    { title: 'Read', collectionName: 'read'}
   ]
 
   componentDidMount() {
     getAll().then((books) => {
       this.setState({
         shelfs: {
-            none: books.filter((book) => {
-            return !book.shelf
-            }),
             currentlyReading: books.filter((book) => {
             return book.shelf === 'currentlyReading'
             }),
@@ -49,7 +45,7 @@ class BooksApp extends React.Component {
             return book.shelf === 'read'
             })
         },
-        all: books,
+        allBooks: books,
         loading: false
       })
     })
@@ -57,11 +53,11 @@ class BooksApp extends React.Component {
 
   loadShelfs = () => {
     getAll().then((books) => {
+      if(!books) {
+        books = []
+      }
       this.setState({
         shelfs: {
-            none: books.filter((book) => {
-            return !book.shelf
-            }),
             currentlyReading: books.filter((book) => {
             return book.shelf === 'currentlyReading'
             }),
@@ -72,38 +68,57 @@ class BooksApp extends React.Component {
             return book.shelf === 'read'
             })
         },
-        all: books,
+        allBooks: books,
+        bookResult: [],
         loading: false
       })
+    }).catch((err) => {
+
     })
   }
   
   search = query => {
     this.setState({ searchQuery: query })
-    BooksAPI.search(query, 5).then(books => {
-      this.setState({
-        shelfs: {
-            none: books.filter((book) => {
-            return !book.shelf
-            }),
-            currentlyReading: books.filter((book) => {
-            return book.shelf === 'currentlyReading'
-            }),
-            wantToRead: books.filter((book) => {
-            return book.shelf === 'wantToRead'
-            }),
-            read: books.filter((book) => {
-            return book.shelf === 'read'
-            })
-        },
-        all: books,
-        loading: false
+    if(!query) {
+      this.loadShelfs()
+    } else {
+      BooksAPI.search(query, 5).then(books => {
+        if(!books) {
+          books = []
+        }
+        if(!books.error) {
+          books.forEach((book) => {
+            book.shelf = this.state.allBooks.filter(
+              (bookOnCurrentReading) => {
+                return book.title === bookOnCurrentReading.title
+              }).map((book) => {
+                return book.shelf
+              })[0]
+          })
+          this.setState({
+            shelfs: {
+                currentlyReading: books.filter((book) => {
+                return book.shelf === 'currentlyReading'
+                }),
+                wantToRead: books.filter((book) => {
+                return book.shelf === 'wantToRead'
+                }),
+                read: books.filter((book) => {
+                return book.shelf === 'read'
+                })
+            },
+            bookResult: books,
+            loading: false
+          })
+        } else {
+          this.setState({bookResult: []})
+        }
       })
-    })
+    }
   }
 
   onChangeShelf = (book, shelf) => {
-      const currentSearchQuery = this.state.searchQuery;
+      const currentSearchQuery = this.state.searchQuery
       BooksAPI.update(book, shelf).then(result => {
           BooksAPI.getAll().then(books => {
             this.setState({
@@ -118,17 +133,16 @@ class BooksApp extends React.Component {
                   return book.shelf === 'read'
                   }),
               },
-              all: books,
               loading: false
             })
-          });
+          })
           if (currentSearchQuery !== "") {
               BooksAPI.search(currentSearchQuery, 5).then(books => {
-                  this.setState({ bookResult: books });
-              });
+                  this.setState({ bookResult: books })
+              })
           }
-      });
-  };
+      })
+  }
 
   render() {
     return (
@@ -144,7 +158,7 @@ class BooksApp extends React.Component {
           <SearchBooks
             searchQuery={this.state.searchQuery}
             search={this.search}
-            books={this.state.shelfs}
+            bookResult={this.state.bookResult}
             shelfs={this.shelfs}
             onChangeShelf={this.onChangeShelf}
             loadShelfs={this.loadShelfs}

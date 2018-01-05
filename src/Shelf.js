@@ -1,5 +1,5 @@
 import React from 'react'
-import Book from './Book'
+import BookList from './BookList'
 import './Shelf.css'
 
 const Shelf = ({ title, shelfs, books, onChangeShelf }) => (
@@ -8,16 +8,7 @@ const Shelf = ({ title, shelfs, books, onChangeShelf }) => (
       <div className="bookshelf-title"><a href="#"><span>{title}</span></a></div>
     </div>
     <div className="bookshelf-books">
-      <ol className="books-grid">
-        {!books || books.length === 0 ? (
-          <h2>Nenhum livro carregado</h2>
-          ):(
-          books.map((book) =>
-          <li key={book.id}>
-            <Book onChangeShelf={onChangeShelf} book={book} shelfs={shelfs} shelf={title}/>
-          </li>
-        ))}
-      </ol>
+      <BookList onChangeShelf={onChangeShelf} books={books} shelfs={shelfs} shelf={title} />
     </div>
   </div>
 )
