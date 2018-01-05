@@ -18,7 +18,7 @@ const Book = ({ book, onChangeShelf, shelfs, shelf }) => {
                 <select id='select-shelf' onChange={(event) => onChangeShelf(book, event.target.value)}>
                 <option value="none" >Move to...</option>
                 {shelfs.map(option => (
-                    <option defaultValue={option.collectionName === book.shelf} key={option.collectionName} value={option.collectionName}>{option.title}</option>
+                    <option selected={option.collectionName === book.shelf} key={option.collectionName} value={option.collectionName}>{option.title}</option>
                 ))}
                 </select>
             </div>
