@@ -1,5 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import { Debounce } from 'react-throttle';
 import ReactLoading from 'react-loading'
 import SearchResult from './SearchResult'
 import If from './utils/if'
@@ -12,15 +13,15 @@ const  SearchBooks = (props) => {
             <div className="search-books-bar">
             <Link to='/' className='close-search' onClick={(event) => loadShelfs()}>Close</Link>
                 <div className="search-books-input-wrapper">
+                <Debounce time="400" handler="onChange">
                     <input
                     type="text"
                     placeholder="Search by title or author"
-                    value={searchQuery}
-                    onChange={event => {
-                        search(event.target.value)
+                    onChange={e => {
+                        search(e.currentTarget.value)
                     }}
-                />
-
+                    />
+                </Debounce>
                 </div>
             </div>
             <div className="search-books-results">

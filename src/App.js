@@ -14,11 +14,7 @@ class BooksApp extends React.Component {
     read: PropTypes.array
   }
   state = {
-    shelfs: {
-      currentlyReading: [],
-      wantToRead: [],
-      read: []
-    },
+    books: [],
     allBooks:[],
     bookResult: [],
     bookById: [],
@@ -31,20 +27,10 @@ class BooksApp extends React.Component {
     { title: 'Read', collectionName: 'read'}
   ]
 
-  componentDidMount() {
+  componentWillMount() {
     getAll().then((books) => {
       this.setState({
-        shelfs: {
-            currentlyReading: books.filter((book) => {
-            return book.shelf === 'currentlyReading'
-            }),
-            wantToRead: books.filter((book) => {
-            return book.shelf === 'wantToRead'
-            }),
-            read: books.filter((book) => {
-            return book.shelf === 'read'
-            })
-        },
+        books: books,
         allBooks: books,
         loading: false
       })
@@ -57,23 +43,13 @@ class BooksApp extends React.Component {
         books = []
       }
       this.setState({
-        shelfs: {
-            currentlyReading: books.filter((book) => {
-            return book.shelf === 'currentlyReading'
-            }),
-            wantToRead: books.filter((book) => {
-            return book.shelf === 'wantToRead'
-            }),
-            read: books.filter((book) => {
-            return book.shelf === 'read'
-            })
-        },
+        books: books,
         allBooks: books,
         bookResult: [],
         loading: false
       })
     }).catch((err) => {
-
+      console.log(err)
     })
   }
   
@@ -83,9 +59,6 @@ class BooksApp extends React.Component {
       this.setState({bookResult: []})
     } else {
       BooksAPI.search(query.trim(), 5).then(books => {
-        if(!books) {
-          books = []
-        }
         if(!books.error) {
           books.forEach((book) => {
             book.shelf = this.state.allBooks.filter(
@@ -96,17 +69,7 @@ class BooksApp extends React.Component {
               })[0]
           })
           this.setState({
-            shelfs: {
-                currentlyReading: books.filter((book) => {
-                return book.shelf === 'currentlyReading'
-                }),
-                wantToRead: books.filter((book) => {
-                return book.shelf === 'wantToRead'
-                }),
-                read: books.filter((book) => {
-                return book.shelf === 'read'
-                })
-            },
+            books: books,
             bookResult: books,
             loading: false
           })
@@ -124,17 +87,7 @@ class BooksApp extends React.Component {
       BooksAPI.update(book, shelf).then(result => {
           BooksAPI.getAll().then(books => {
             this.setState({
-              shelfs: {
-                currentlyReading: books.filter((book) => {
-                  return book.shelf === 'currentlyReading'
-                  }),
-                  wantToRead: books.filter((book) => {
-                  return book.shelf === 'wantToRead'
-                  }),
-                  read: books.filter((book) => {
-                  return book.shelf === 'read'
-                  }),
-              },
+              books: books,
               loading: false
             })
           })
@@ -152,7 +105,7 @@ class BooksApp extends React.Component {
         <Route exact path='/' render={() => (
           <ListBooks shelfs={this.shelfs}
             changeShelf={this.onChangeShelf}
-            books={this.state.shelfs}
+            books={this.state.books}
             loading={this.state.loading}
             />
         )}/>

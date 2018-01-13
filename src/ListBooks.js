@@ -27,7 +27,7 @@ const ListBooks = ({shelfs, changeShelf, books, loading}) => {
                   onChangeShelf={changeShelf}
                   title={shelf.title}
                   shelfs={shelfs}
-                  books={books[shelf.collectionName]}
+                  books={books.filter(b => b.shelf === shelf.collectionName)}
                 />
               ))}
           </div>
