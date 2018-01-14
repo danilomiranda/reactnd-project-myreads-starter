@@ -5,13 +5,10 @@ const noImage = 'http://via.placeholder.com/128x193'
 
 const Book = ({ book, onChangeShelf, shelfs, shelf }) => {
     const bookThumbnail = (book.imageLinks && book.imageLinks.thumbnail) ? book.imageLinks.thumbnail : noImage
-    shelfs = shelfs.filter(item => item.title !== shelf)
     return (
         <div className="book">
             <div className="book-top">
                 <div className="book-cover" style={{
-                width: 128,
-                height: 193,
                 backgroundImage: `url(${bookThumbnail})`
                 }}/>
             <div className="book-shelf-changer">
